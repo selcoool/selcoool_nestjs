@@ -1,5 +1,5 @@
 services:
-  project_nestjs:
+  selcoool_nestjs:
     container_name: selcoool_nestjs
     restart: always
     build:
