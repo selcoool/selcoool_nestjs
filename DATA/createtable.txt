@@ -1,0 +1,117 @@
+npx prisma db pull
+npx prisma generate
+
+
+USE project_airbnb_050824;
+
+CREATE TABLE users (
+    id_user INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    birthday DATE,
+    hobby VARCHAR(255),
+    address_user VARCHAR(255),
+    marital_status VARCHAR(255),
+    account_status VARCHAR(255),
+    avatar_user VARCHAR(255),
+    phone_user VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE clients (
+    id_client INT PRIMARY KEY AUTO_INCREMENT,
+    username_client VARCHAR(255) NOT NULL,
+    phone_client VARCHAR(255),
+    email_client VARCHAR(255),
+    content_client VARCHAR(255),
+    status_client VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+
+CREATE TABLE destinations (
+    id_destination INT PRIMARY KEY AUTO_INCREMENT,
+    name_destination VARCHAR(255) NOT NULL,
+    location VARCHAR(255),
+    country VARCHAR(255),
+    rating DECIMAL(3, 2),  -- Example: rating out of 5.00
+    id_comment_user INT,
+    estimated_price DECIMAL(10, 2),
+    id_user INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_comment_user) REFERENCES users(id_user) ON DELETE SET NULL,
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
+);
+
+
+CREATE TABLE notifications (
+    id_notification INT PRIMARY KEY AUTO_INCREMENT,
+    content_notification VARCHAR(255) NOT NULL,
+    id_user INT,
+    subjection_client INT NULL,  -- Foreign key to clients (nullable)
+    subjection_destination INT NULL,  -- Foreign key to destinations (nullable)
+    status_notification VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
+    FOREIGN KEY (subjection_client) REFERENCES clients(id_client) ON DELETE CASCADE,
+    FOREIGN KEY (subjection_destination) REFERENCES destinations(id_destination) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE photos (
+    id_photo INT PRIMARY KEY AUTO_INCREMENT,
+    link_photo VARCHAR(255) NOT NULL,
+    id_user INT,
+    id_destination INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
+    FOREIGN KEY (id_destination) REFERENCES destinations(id_destination) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE comments (
+    id_comment INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT,
+    id_destination INT,
+    content_comment VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
+    FOREIGN KEY (id_destination) REFERENCES destinations(id_destination) ON DELETE CASCADE
+);
+
+
+CREATE TABLE bookings (
+    id_booking INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT,
+    id_destination INT,
+    booking_price DECIMAL(10, 2),
+    destination_name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
+    FOREIGN KEY (id_destination) REFERENCES destinations(id_destination) ON DELETE CASCADE
+);
+
+
+
+
+CREATE TABLE m (
+    id INT AUTO_INCREMENT PRIMARY KEY,  -- Auto-incrementing primary key
+    username VARCHAR(255) NOT NULL,     -- Username column with max length 255, required
+    message TEXT NOT NULL,              -- Message column for large text, required
+    roomId VARCHAR(255) NULL,           -- Optional roomId column, max length 255, can be NULL
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP  -- Optional createdAt column with default current timestamp
+);
+
+
+
+

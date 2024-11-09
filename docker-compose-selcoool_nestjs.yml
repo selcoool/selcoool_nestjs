@@ -6,8 +6,8 @@ services:
       context: ./
     networks:
       - root_rent_room_network
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
 
 networks:
   root_rent_room_network:
