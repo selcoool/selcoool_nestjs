@@ -15,7 +15,11 @@ import { ChatMessageDto } from './dtos/chat.dto';
 @WebSocketGateway({
   namespace: 'real_time_api',
   cors: {
-    origin: '*',
+    origin:["http://localhost:4000","https://selcoool.com"], //frontend url
+    credentials: true,
+    allowedHeaders:'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    methods:'GET,HEAD,PUT,PATCH,POST,DELETE',
+    exposedHeaders:'Content-Range, X-Content-Range'
   },
 })
 export class Real_Time_Gateway
