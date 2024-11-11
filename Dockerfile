@@ -28,11 +28,9 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 
-# Mở cổng ứng dụng
-# EXPOSE 5000
-
 # Lệnh để chạy ứng dụng
 CMD ["npm", "run", "start:prod"]
+
 
 
 
