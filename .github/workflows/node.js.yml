@@ -18,11 +18,13 @@ jobs:
       uses: actions/checkout@v4
 
     - name: SSH to VPS and update project
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v0.1.8
       with:
         host: ${{ secrets.VPS_IP }}
         username: ${{ secrets.VPS_USERNAME }}
         password: ${{ secrets.VPS_PASSWORD }}  # Sử dụng nếu bạn dùng mật khẩu cho SSH
+        # Hoặc dùng SSH_PRIVATE_KEY:
+        # key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           echo "Checking if the project directory exists..."
           if [ -d "/root/selcoool_nestjs" ]; then
@@ -42,6 +44,10 @@ jobs:
             cd /root/selcoool_nestjs
 
             git clone https://github.com/${{ github.repository }} /root/selcoool_nestjs
+            if [ ! -f "/root/selcoool_nestjs/.env" ]; then
+              echo "Creating default .env file"
+              echo "DATABASE_URL=your_database_url_here" > /root/selcoool_nestjs/.env
+            fi
             docker-compose -f docker-compose-selcoool_nestjs.yml up -d || docker-compose logs
             # Optional: Only prune if required
             # docker system prune -f
@@ -49,7 +55,8 @@ jobs:
             cd ~
             docker-compose -f docker-compose-nginx.yml restart nginx
           fi
-          echo "Cập nhật API project_nestjs hoàn thành
+          echo "Cập nhật API project_nestjs hoàn thành"
+
 
         # script: |
         #   echo "Xoa thu muc du an"
