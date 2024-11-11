@@ -13,7 +13,7 @@ RUN npm ci
 COPY . .
 
 # # Tạo Prisma Client nếu cần
-# RUN npx prisma generate
+RUN npx prisma generate
 
 # Build ứng dụng
 RUN npm run build
