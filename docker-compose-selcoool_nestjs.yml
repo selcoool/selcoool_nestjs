@@ -11,6 +11,8 @@ services:
       - root_rent_room_network
     env_file:
       - .env
+    # ports:
+    #   - "9000:9000" # Hoặc cổng khác tùy thuộc vào ứng dụng của bạn
 
 networks:
   root_rent_room_network:
