@@ -3,7 +3,7 @@ services:
     container_name: selcoool_nestjs
     restart: always
     build:
-      context: ./
+      context: .
     networks:
       - root_rent_room_network
     env_file:
@@ -12,4 +12,19 @@ services:
 networks:
   root_rent_room_network:
     external: true
+
+# services:
+#   selcoool_nestjs:
+#     container_name: selcoool_nestjs
+#     restart: always
+#     build:
+#       context: ./
+#     networks:
+#       - root_rent_room_network
+#     env_file:
+#       - .env
+
+# networks:
+#   root_rent_room_network:
+#     external: true
 
