@@ -23,132 +23,36 @@ jobs:
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}  # Only use if SSH password-based authentication is used
-          # Alternatively, use SSH_PRIVATE_KEY for key-based authentication:
-          # key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            echo "Starting deployment on VPS..."
             PROJECT_DIR="/root/selcoool_nestjs"
             
-            # Check if the project directory exists and remove it if necessary
             if [ -d "$PROJECT_DIR" ]; then
-              echo "Project directory exists. Removing it..."
+              echo "Removing existing project directory..."
               rm -rf "$PROJECT_DIR"
             fi
 
-            echo "Creating project directory..."
+            echo "Creating project directory and cloning the latest code..."
             mkdir -p "$PROJECT_DIR" && cd "$PROJECT_DIR"
-
-            echo "Cloning the latest code from the repository..."
             git clone https://github.com/${{ github.repository }} "$PROJECT_DIR"
 
-            echo "Starting Docker Compose for the project..."
-            docker-compose -f docker-compose-selcoool_nestjs.yml down || true  # Stop previous instances if running
+            echo "Building Docker image..."
+            docker build -t selcoool_nestjs_image .  # Build the Docker image with a tag
+
+            echo "Deploying with Docker Compose..."
             docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build
 
-            # Optional: Prune unused Docker resources if necessary
-            # docker system prune -f
+            echo "Checking logs for any issues..."
+            docker-compose -f docker-compose-selcoool_nestjs.yml logs --tail=50
 
             echo "Restarting Nginx..."
             cd ~
             docker-compose -f docker-compose-nginx.yml restart nginx
-            echo "Deployment complete!"
-
-
-
-# name: Deploy to VPS BACKEND_04022231z1
-
-# on:
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
-
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 20
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v4
-
-#     - name: SSH to VPS and update project
-#       uses: appleboy/ssh-action@v0.1.8
-#       with:
-#         host: ${{ secrets.VPS_IP }}
-#         username: ${{ secrets.VPS_USERNAME }}
-#         password: ${{ secrets.VPS_PASSWORD }}  # Sử dụng nếu bạn dùng mật khẩu cho SSH
-#         # Hoặc dùng SSH_PRIVATE_KEY:
-#         # key: ${{ secrets.SSH_PRIVATE_KEY }}
-#         script: |
-#           echo "Checking if the project directory exists..."
-#           if [ -d "/root/selcoool_nestjs" ]; then
-#             echo "Thư mục dự án tồn tại"
-#               rm -rf /root/selcoool_nestjs
-#               echo "Thư mục dự án không tồn tại"
-#               mkdir -p /root/selcoool_nestjs
-#               cd /root/selcoool_nestjs
-
-#               git clone https://github.com/${{ github.repository }} /root/selcoool_nestjs
-#               docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build
-#               # Optional: Only prune if required
-#               # docker system prune -f
-#               # Restart Nginx
-#               cd ~
-#               docker-compose -f docker-compose-nginx.yml restart nginx
-
-           
-         
 
 
 
 
-          # script: |
-          # echo "Checking if the project directory exists..."
-          # if [ -d "/root/selcoool_nestjs" ]; then
-          #   echo "Thư mục dự án tồn tại"
-          #   cd /root/selcoool_nestjs
 
-          #   git pull
-          #   docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build || docker-compose logs
-          #   # Optional: Only prune if required
-          #   # docker system prune -f
-          #   # Restart Nginx
-          #   cd ~
-          #   docker-compose -f docker-compose-nginx.yml restart nginx
-          # else
-          #   echo "Thư mục dự án không tồn tại"
-          #   mkdir -p /root/selcoool_nestjs
-          #   cd /root/selcoool_nestjs
-
-          #   git clone https://github.com/${{ github.repository }} /root/selcoool_nestjs
-          #   if [ ! -f "/root/selcoool_nestjs/.env" ]; then
-          #     echo "Creating default .env file"
-          #     echo "DATABASE_URL=your_database_url_here" > /root/selcoool_nestjs/.env
-          #   fi
-          #   docker-compose -f docker-compose-selcoool_nestjs.yml up -d || docker-compose logs
-          #   # Optional: Only prune if required
-          #   # docker system prune -f
-          #   # Restart Nginx
-          #   cd ~
-          #   docker-compose -f docker-compose-nginx.yml restart nginx
-          # fi
-          # echo "Cập nhật API project_nestjs hoàn thành"
-
-
-
-        # script: |
-        #   echo "Xoa thu muc du an"
-        #   rm -rf /root/project_nestjs
-        #   echo "Xoa images and container"
-          
-        #   docker stop $(docker ps -aq) || true
-        #   docker rm $(docker ps -aq) || true
-        #   docker rmi $(docker images -q) || true
-        #   docker-compose -f docker-compose-api-project_nestjs.yml down
-        #   docker system prune -a -f
-        #   sudo systemctl restart docker
-        #   echo "Xoa du an 1"
 
 
 
