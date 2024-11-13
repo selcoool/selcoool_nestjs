@@ -34,7 +34,7 @@ jobs:
             git pull
             docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build || docker-compose logs
             # Optional: Only prune if required
-            docker system prune -f
+            # docker system prune -f
             # Restart Nginx
             cd ~
             docker-compose -f docker-compose-nginx.yml restart nginx
@@ -50,7 +50,7 @@ jobs:
             fi
             docker-compose -f docker-compose-selcoool_nestjs.yml up -d || docker-compose logs
             # Optional: Only prune if required
-            docker system prune -f
+            # docker system prune -f
             # Restart Nginx
             cd ~
             docker-compose -f docker-compose-nginx.yml restart nginx
