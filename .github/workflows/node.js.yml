@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Deploy to VPS BACKEND_04022231z
+name: Deploy to VPS BACKEND_04022231z1
 
 on:
   push:
@@ -30,6 +30,19 @@ jobs:
           if [ -d "/root/selcoool_nestjs" ]; then
             echo "Thư mục dự án tồn tại"
               rm -rf /root/selcoool_nestjs
+
+              echo "Thư mục dự án không tồn tại"
+              mkdir -p /root/selcoool_nestjs
+              cd /root/selcoool_nestjs
+
+              git clone https://github.com/${{ github.repository }} /root/selcoool_nestjs
+              docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build
+              # Optional: Only prune if required
+              # docker system prune -f
+              # Restart Nginx
+              cd ~
+              docker-compose -f docker-compose-nginx.yml restart nginx
+
             # cd /root/selcoool_nestjs
 
             # git pull
@@ -38,9 +51,9 @@ jobs:
             # # docker system prune -f
             # # Restart Nginx
             # cd ~
-            docker-compose -f docker-compose-nginx.yml restart nginx
-          else
-            echo "Thư mục dự án không tồn tại"
+            # docker-compose -f docker-compose-nginx.yml restart nginx
+          # else
+          #   echo "Thư mục dự án không tồn tại"
             # mkdir -p /root/selcoool_nestjs
             # cd /root/selcoool_nestjs
 
@@ -54,9 +67,9 @@ jobs:
             # # docker system prune -f
             # # Restart Nginx
             # cd ~
-            docker-compose -f docker-compose-nginx.yml restart nginx
-          fi
-          echo "Cập nhật API project_nestjs hoàn thành"
+            # docker-compose -f docker-compose-nginx.yml restart nginx
+          # fi
+          # echo "Cập nhật API project_nestjs hoàn thành"
 
 
 
