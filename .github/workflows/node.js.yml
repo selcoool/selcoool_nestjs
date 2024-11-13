@@ -1,53 +1,53 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 
-name: Deploy to VPS BACKEND_04022231z1
+# name: Deploy to VPS BACKEND_04022231z1
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 20
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: SSH to VPS and update project
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          script: |
-            PROJECT_DIR="/root/selcoool_nestjs"
+#       - name: SSH to VPS and update project
+#         uses: appleboy/ssh-action@v0.1.8
+#         with:
+#           host: ${{ secrets.VPS_IP }}
+#           username: ${{ secrets.VPS_USERNAME }}
+#           password: ${{ secrets.VPS_PASSWORD }}
+#           script: |
+#             PROJECT_DIR="/root/selcoool_nestjs"
             
-            if [ -d "$PROJECT_DIR" ]; then
-              echo "Removing existing project directory..."
-              rm -rf "$PROJECT_DIR"
-            fi
+#             if [ -d "$PROJECT_DIR" ]; then
+#               echo "Removing existing project directory..."
+#               rm -rf "$PROJECT_DIR"
+#             fi
 
-            echo "Creating project directory and cloning the latest code..."
-            mkdir -p "$PROJECT_DIR" && cd "$PROJECT_DIR"
-            git clone https://github.com/${{ github.repository }} "$PROJECT_DIR"
+#             # echo "Creating project directory and cloning the latest code..."
+#             # mkdir -p "$PROJECT_DIR" && cd "$PROJECT_DIR"
+#             # git clone https://github.com/${{ github.repository }} "$PROJECT_DIR"
 
-            echo "Building Docker image..."
-            docker build -t selcoool_nestjs_image .  # Build the Docker image with a tag
+#             # echo "Building Docker image..."
+#             # docker build -t selcoool_nestjs_image .  # Build the Docker image with a tag
 
-            echo "Deploying with Docker Compose..."
-            docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build
+#             # echo "Deploying with Docker Compose..."
+#             # docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build
 
-            echo "Checking logs for any issues..."
-            docker-compose -f docker-compose-selcoool_nestjs.yml logs --tail=50
+#             # echo "Checking logs for any issues..."
+#             # docker-compose -f docker-compose-selcoool_nestjs.yml logs --tail=50
 
-            echo "Restarting Nginx..."
-            cd ~
-            docker-compose -f docker-compose-nginx.yml restart nginx
+#             # echo "Restarting Nginx..."
+#             # cd ~
+#             # docker-compose -f docker-compose-nginx.yml restart nginx
 
 
 
