@@ -12,6 +12,8 @@ RUN npm ci
 # Sao chép toàn bộ mã nguồn
 COPY . .
 
+RUN npx prisma db pull
+
 # Tạo Prisma Client nếu cần
 RUN npx prisma generate
 

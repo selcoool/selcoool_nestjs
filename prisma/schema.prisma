@@ -21,8 +21,8 @@ model bookings {
   id_destination   Int?
   booking_price    Decimal?      @db.Decimal(10, 2)
   destination_name String?       @db.VarChar(255)
-  created_at       DateTime      @default(now()) @db.Timestamp(0)
-  updated_at       DateTime      @default(now()) @db.Timestamp(0)
+  created_at       DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?     @default(now()) @db.Timestamp(0)
   users            users?        @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: Restrict, map: "bookings_ibfk_1")
   destinations     destinations? @relation(fields: [id_destination], references: [id_destination], onDelete: Cascade, onUpdate: Restrict, map: "bookings_ibfk_2")
 
@@ -37,8 +37,8 @@ model clients {
   email_client    String?         @db.VarChar(255)
   content_client  String?         @db.VarChar(255)
   status_client   String?         @db.VarChar(255)
-  created_at      DateTime        @default(now()) @db.Timestamp(0)
-  updated_at      DateTime        @default(now()) @db.Timestamp(0)
+  created_at      DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?       @default(now()) @db.Timestamp(0)
   notifications   notifications[]
 }
 
@@ -47,8 +47,8 @@ model comments {
   id_user         Int?
   id_destination  Int?
   content_comment String        @db.VarChar(255)
-  created_at      DateTime      @default(now()) @db.Timestamp(0)
-  updated_at      DateTime      @default(now()) @db.Timestamp(0)
+  created_at      DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?     @default(now()) @db.Timestamp(0)
   users           users?        @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_1")
   destinations    destinations? @relation(fields: [id_destination], references: [id_destination], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_2")
 
@@ -65,8 +65,8 @@ model destinations {
   id_comment_user                           Int?
   estimated_price                           Decimal?        @db.Decimal(10, 2)
   id_user                                   Int?
-  created_at                                DateTime        @default(now()) @db.Timestamp(0)
-  updated_at                                DateTime        @default(now()) @db.Timestamp(0)
+  created_at                                DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at                                DateTime?       @default(now()) @db.Timestamp(0)
   bookings                                  bookings[]
   comments                                  comments[]
   users_destinations_id_comment_userTousers users?          @relation("destinations_id_comment_userTousers", fields: [id_comment_user], references: [id_user], onUpdate: Restrict, map: "destinations_ibfk_1")
@@ -85,8 +85,8 @@ model notifications {
   subjection_client      Int?
   subjection_destination Int?
   status_notification    String?       @db.VarChar(255)
-  created_at             DateTime      @default(now()) @db.Timestamp(0)
-  updated_at             DateTime      @default(now()) @db.Timestamp(0)
+  created_at             DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at             DateTime?     @default(now()) @db.Timestamp(0)
   users                  users?        @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: Restrict, map: "notifications_ibfk_1")
   clients                clients?      @relation(fields: [subjection_client], references: [id_client], onDelete: Cascade, onUpdate: Restrict, map: "notifications_ibfk_2")
   destinations           destinations? @relation(fields: [subjection_destination], references: [id_destination], onDelete: Cascade, onUpdate: Restrict, map: "notifications_ibfk_3")
@@ -101,8 +101,8 @@ model photos {
   link_photo     String        @db.VarChar(255)
   id_user        Int?
   id_destination Int?
-  created_at     DateTime      @default(now()) @db.Timestamp(0)
-  updated_at     DateTime      @default(now()) @db.Timestamp(0)
+  created_at     DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at     DateTime?     @default(now()) @db.Timestamp(0)
   users          users?        @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: Restrict, map: "photos_ibfk_1")
   destinations   destinations? @relation(fields: [id_destination], references: [id_destination], onDelete: Cascade, onUpdate: Restrict, map: "photos_ibfk_2")
 
@@ -121,8 +121,8 @@ model users {
   account_status                                   String?         @db.VarChar(255)
   avatar_user                                      String?         @db.VarChar(255)
   phone_user                                       String?         @db.VarChar(255)
-  created_at                                       DateTime        @default(now()) @db.Timestamp(0)
-  updated_at                                       DateTime        @default(now()) @db.Timestamp(0)
+  created_at                                       DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at                                       DateTime?       @default(now()) @db.Timestamp(0)
   bookings                                         bookings[]
   comments                                         comments[]
   destinations_destinations_id_comment_userTousers destinations[]  @relation("destinations_id_comment_userTousers")

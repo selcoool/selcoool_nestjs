@@ -1,0 +1,48 @@
+INSERT INTO users (username, password, birthday, hobby, address_user, marital_status, account_status, avatar_user, phone_user)
+VALUES
+('john_doe', 'hashed_password_123', '1990-05-15', 'Photography', '123 Main St, City, Country', 'Single', 'Active', 'avatar1.jpg', '123-456-7890'),
+('jane_smith', 'hashed_password_456', '1985-10-25', 'Reading', '456 Elm St, Town, Country', 'Married', 'Inactive', 'avatar2.jpg', '987-654-3210');
+
+
+INSERT INTO clients (username_client, phone_client, email_client, content_client, status_client)
+VALUES
+('alice_jones', '111-222-3333', 'alice.jones@example.com', 'Looking for vacation package', 'New'),
+('bob_miller', '444-555-6666', 'bob.miller@example.com', 'Inquiring about destination details', 'Follow-up');
+
+
+
+
+INSERT INTO destinations (name_destination, location, country, rating, id_comment_user, estimated_price, id_user)
+VALUES
+('Paris', 'Eiffel Tower', 'France', 4.7, NULL, 1500.00, 1),
+('New York', 'Times Square', 'USA', 4.5, NULL, 2000.00, 2);
+
+
+INSERT INTO notifications (content_notification, id_user, subjection_client, subjection_destination, status_notification)
+VALUES
+('New message about your booking', 1, NULL, 1, 'Unread'),
+('New comment on your destination', 2, NULL, 2, 'Read');
+
+
+INSERT INTO photos (link_photo, id_user, id_destination)
+VALUES
+('https://example.com/photos/paris.jpg', 1, 1),
+('https://example.com/photos/nyc.jpg', 2, 2);
+
+
+INSERT INTO comments (id_user, id_destination, content_comment)
+VALUES
+(1, 1, 'Amazing view of the Eiffel Tower!'),
+(2, 2, 'Times Square is so vibrant and full of energy!');
+
+
+INSERT INTO bookings (id_user, id_destination, booking_price, destination_name)
+VALUES
+(1, 1, 1500.00, 'Paris'),
+(2, 2, 2000.00, 'New York');
+
+
+INSERT INTO m (username, message, roomId)
+VALUES
+('john_doe', 'Hey, I am interested in the Paris package.', 'room_1'),
+('alice_jones', 'Could you send more details about the trip?', 'room_2');
