@@ -37,7 +37,7 @@ jobs:
             # # Optional: Only prune if required
             # # docker system prune -f
             # # Restart Nginx
-            # cd ~
+            cd ~
             docker-compose -f docker-compose-nginx.yml restart nginx
           else
             echo "Thư mục dự án không tồn tại"
