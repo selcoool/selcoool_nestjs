@@ -5,14 +5,17 @@ name: Deploy to VPS BACKEND_0402223
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      ACTIONS_STEP_DEBUG: true
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -22,40 +25,60 @@ jobs:
       with:
         host: ${{ secrets.VPS_IP }}
         username: ${{ secrets.VPS_USERNAME }}
-        password: ${{ secrets.VPS_PASSWORD }}  # Sử dụng nếu bạn dùng mật khẩu cho SSH
-        # Hoặc dùng SSH_PRIVATE_KEY:
+        password: ${{ secrets.VPS_PASSWORD }}  # Use if you authenticate with a password
+        # Alternatively, use SSH_PRIVATE_KEY for better security:
         # key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           echo "Checking if the project directory exists..."
           if [ -d "/root/selcoool_nestjs" ]; then
-            echo "Thư mục dự án tồn tại"
+            echo "Project directory exists"
             cd /root/selcoool_nestjs
 
+            echo "Pulling latest changes..."
             git pull
-            docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build || docker-compose logs
-            # Optional: Only prune if required
-            # docker system prune -f
-            # Restart Nginx
+
+            echo "Attempting to build Docker image..."
+            docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build || {
+              echo "Failed to build the Docker image, showing logs:";
+              docker-compose -f docker-compose-selcoool_nestjs.yml logs;
+              exit 1;
+            }
+
+            echo "Restarting Nginx..."
             cd ~
-            docker-compose -f docker-compose-nginx.yml restart nginx
+            docker-compose -f docker-compose-nginx.yml restart nginx || {
+              echo "Failed to restart Nginx, check Nginx logs for more details";
+              exit 1;
+            }
           else
-            echo "Thư mục dự án không tồn tại"
+            echo "Project directory does not exist, setting up for the first time"
             mkdir -p /root/selcoool_nestjs
             cd /root/selcoool_nestjs
 
+            echo "Cloning repository..."
             git clone https://github.com/${{ github.repository }} /root/selcoool_nestjs
+
             if [ ! -f "/root/selcoool_nestjs/.env" ]; then
               echo "Creating default .env file"
               echo "DATABASE_URL=your_database_url_here" > /root/selcoool_nestjs/.env
             fi
-            docker-compose -f docker-compose-selcoool_nestjs.yml up -d || docker-compose logs
-            # Optional: Only prune if required
-            # docker system prune -f
-            # Restart Nginx
+
+            echo "Building Docker image for the first time..."
+            docker-compose -f docker-compose-selcoool_nestjs.yml up -d || {
+              echo "Failed to build Docker image on first-time setup";
+              docker-compose -f docker-compose-selcoool_nestjs.yml logs;
+              exit 1;
+            }
+
+            echo "Restarting Nginx..."
             cd ~
-            docker-compose -f docker-compose-nginx.yml restart nginx
+            docker-compose -f docker-compose-nginx.yml restart nginx || {
+              echo "Failed to restart Nginx on first-time setup";
+              exit 1;
+            }
           fi
-          echo "Cập nhật API project_nestjs hoàn thành"
+          echo "Deployment complete"
+
 
 
         # script: |
