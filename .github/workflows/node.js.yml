@@ -29,6 +29,7 @@ jobs:
           echo "Checking if the project directory exists..."
           if [ -d "/root/selcoool_nestjs" ]; then
             echo "Thư mục dự án tồn tại"
+              rm -rf /root/selcoool_nestjs
             # cd /root/selcoool_nestjs
 
             # git pull
