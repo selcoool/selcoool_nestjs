@@ -1,53 +1,48 @@
-# # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+name: Deploy to VPS NEST
 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-# name: Deploy to VPS BACKEND_04022231z1
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-# on:
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
+    - name: SSH to VPS and update project
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_IP }}
+        username: ${{ secrets.VPS_USERNAME }}
+        password: ${{ secrets.VPS_PASSWORD }}  # Use password if you are using SSH password
+        # key: ${{ secrets.VPS_SSH_KEY }}  # Use SSH key if applicable
+        script: |
+          script: |
+          # Xóa thư mục nếu đã tồn tại và tạo mới
+          if [ -d "/root/selcoool_nestjs" ]; then
+            echo "Thư mục /root/selcoool_nestjs đã tồn tại. Đang xóa..."
+            rm -rf /root/selcoool_nestjs
+          fi
+          mkdir -p /root/selcoool_nestjs
+          cd /root/selcoool_nestjs
+          
+          # Clone lại mã nguồn mới nhất từ GitHub
+          git clone https://github.com/${{ github.repository }} . || git pull origin main
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 20
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
+          # Build và khởi động Docker containers
+          docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build || { echo "Docker Compose failed!"; exit 1; }
+          
+          # Dọn dẹp các Docker images không sử dụng
+          docker system prune -f
 
-#       - name: SSH to VPS and update project
-#         uses: appleboy/ssh-action@v0.1.8
-#         with:
-#           host: ${{ secrets.VPS_IP }}
-#           username: ${{ secrets.VPS_USERNAME }}
-#           password: ${{ secrets.VPS_PASSWORD }}
-#           script: |
-#             PROJECT_DIR="/root/selcoool_nestjs"
-            
-#             if [ -d "$PROJECT_DIR" ]; then
-#               echo "Removing existing project directory..."
-#               rm -rf "$PROJECT_DIR"
-#             fi
-
-#             # echo "Creating project directory and cloning the latest code..."
-#             # mkdir -p "$PROJECT_DIR" && cd "$PROJECT_DIR"
-#             # git clone https://github.com/${{ github.repository }} "$PROJECT_DIR"
-
-#             # echo "Building Docker image..."
-#             # docker build -t selcoool_nestjs_image .  # Build the Docker image with a tag
-
-#             # echo "Deploying with Docker Compose..."
-#             # docker-compose -f docker-compose-selcoool_nestjs.yml up -d --build
-
-#             # echo "Checking logs for any issues..."
-#             # docker-compose -f docker-compose-selcoool_nestjs.yml logs --tail=50
-
-#             # echo "Restarting Nginx..."
-#             # cd ~
-#             # docker-compose -f docker-compose-nginx.yml restart nginx
+          # Khởi động lại dịch vụ Nginx
+          cd ~
+          docker-compose -f docker-compose-nginx.yml restart nginx
 
 
 
